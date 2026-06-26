@@ -2,7 +2,10 @@
 
 ## 2026-06-26
 
+- Upgraded the direct MCP runtime dependency from `@modelcontextprotocol/sdk@^1.25.3` to `^1.29.0` to clear the known shared server/transport isolation advisory on the project's primary MCP SDK.
+- Added regression coverage that enforces a minimum patched `@modelcontextprotocol/sdk` version in `package.json` so future dependency drift cannot silently reintroduce the vulnerable range.
 - Bumped the project version uniformly to `1.2.2` across npm/package metadata and MCP runtime metadata.
+- Added `npm run inspector` and `npm run inspector:build` helpers for launching the official MCP Inspector against the source or built server entrypoints.
 - Added `ALLOW_PRIVATE_NETWORK` so browser-backed tools still block private, loopback, and link-local targets by default but can be explicitly re-enabled for trusted internal scraping deployments.
 - Documented the new runtime flag in `server.json` and the README, and emit a startup warning when the flag is enabled.
 - Added regression coverage for the opt-in private-network path in both direct URL validation and redirect-time request guarding.

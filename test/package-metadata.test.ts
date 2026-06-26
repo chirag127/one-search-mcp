@@ -6,6 +6,8 @@ const ROOT_DIR = path.resolve(import.meta.dirname, '..');
 
 interface PackageJson {
   version: string;
+  dependencies?: Record<string, string>;
+  scripts?: Record<string, string>;
   tsup?: {
     sourcemap?: boolean;
   };
@@ -40,6 +42,39 @@ async function readRuntimeVersion(): Promise<string> {
   return versionMatch[1];
 }
 
+const MIN_MCP_SDK_VERSION = [1, 29, 0] as const;
+
+function parseSemver(versionRange: string): [number, number, number] {
+  const versionMatch = versionRange.match(/(\d+)\.(\d+)\.(\d+)/);
+
+  if (!versionMatch) {
+    throw new Error(`Unable to parse semver from: ${versionRange}`);
+  }
+
+  return [
+    Number(versionMatch[1]),
+    Number(versionMatch[2]),
+    Number(versionMatch[3]),
+  ];
+}
+
+function isVersionAtLeast(
+  actual: [number, number, number],
+  minimum: readonly [number, number, number],
+): boolean {
+  for (let index = 0; index < minimum.length; index += 1) {
+    if (actual[index] > minimum[index]) {
+      return true;
+    }
+
+    if (actual[index] < minimum[index]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 describe('package metadata', () => {
   it('keeps published versions aligned and disables sourcemaps in build output', async () => {
     const packageJson = await readJsonFile<PackageJson>('package.json');
@@ -50,6 +85,14 @@ describe('package metadata', () => {
     expect(serverJson.packages?.[0]?.version).toBe(packageJson.version);
     expect(runtimeVersion).toBe(packageJson.version);
     expect(packageJson.tsup?.sourcemap).toBe(false);
+  });
+
+  it('pins @modelcontextprotocol/sdk to a patched release', async () => {
+    const packageJson = await readJsonFile<PackageJson>('package.json');
+    const sdkVersionRange = packageJson.dependencies?.['@modelcontextprotocol/sdk'];
+
+    expect(sdkVersionRange).toBeDefined();
+    expect(isVersionAtLeast(parseSemver(sdkVersionRange!), MIN_MCP_SDK_VERSION)).toBe(true);
   });
 
   it('documents all supported search provider environment variables in server.json', async () => {
@@ -70,6 +113,17 @@ describe('package metadata', () => {
     );
     expect(variablesByName.get('ALLOW_PRIVATE_NETWORK')).toContain(
       'private, loopback, and link-local network targets',
+    );
+  });
+
+  it('exposes MCP Inspector scripts for source and built server entrypoints', async () => {
+    const packageJson = await readJsonFile<PackageJson>('package.json');
+
+    expect(packageJson.scripts?.inspector).toBe(
+      'npx -y @modelcontextprotocol/inspector npx tsx src/index.ts',
+    );
+    expect(packageJson.scripts?.['inspector:build']).toBe(
+      'npm run build && npx -y @modelcontextprotocol/inspector node dist/index.js',
     );
   });
 });

@@ -1,5 +1,11 @@
 # Patterns
 
+## Runtime Dependency Security Floors
+
+- Direct runtime dependencies with known security advisories should be bumped to a patched floor as soon as the project confirms the upgraded path still builds and passes targeted lifecycle tests.
+- When a runtime dependency floor matters for security, add an automated metadata test that enforces the minimum acceptable version range from `package.json` so a later downgrade fails in CI before publish.
+- For MCP transport dependencies, pair version-floor checks with at least one real startup or lifecycle verification path so dependency upgrades prove both security posture and protocol usability.
+
 ## Abort-Aware Browser Tasks
 
 - Any code path that creates an `AgentBrowser` should run through `runBrowserTask(...)`.
@@ -33,6 +39,7 @@
 - Package version metadata must stay aligned across `package.json`, `package-lock.json`, `server.json`, and the MCP runtime version exposed from `src/index.ts`.
 - Published npm artifacts should exclude sourcemaps unless there is an explicit debugging requirement to ship them.
 - Docker release builds should publish only the exact semver tag and `latest`; avoid floating major-only or major-minor tags that can silently retarget existing deployments.
+- Keep local MCP debugging entrypoints discoverable through stable `npm` scripts so developers can launch the official MCP Inspector against both source and built server entrypoints without reconstructing nested `npx` commands by hand.
 
 ## Tavily Search Integration
 

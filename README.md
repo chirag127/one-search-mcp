@@ -83,6 +83,21 @@ npm install -g one-search-mcp
 npx -y one-search-mcp
 ```
 
+### Local Debugging with MCP Inspector
+
+Use the official MCP Inspector to interactively test tools, resources, and prompts against this server during local development.
+
+```bash
+# Inspect the TypeScript source entrypoint
+npm run inspector
+
+# Inspect the built server entrypoint
+npm run inspector:build
+
+# Example with explicit environment variables
+ALLOW_PRIVATE_NETWORK=true SEARCH_PROVIDER=local npm run inspector
+```
+
 ### Using Docker
 
 Docker image includes all dependencies (Chromium browser) pre-installed, no additional setup required.
