@@ -20,6 +20,7 @@
 - Any browser page used for scraping or mapping must install a request-level guard so redirects and subresource requests are revalidated before they hit the network.
 - Allowed browser targets should be limited to `http` / `https` and must reject loopback, RFC1918 private, carrier-grade NAT, link-local, and IPv6 unique-local addresses after DNS resolution.
 - Treat mixed DNS answers as unsafe if any resolved address falls into a blocked range.
+- Regression coverage for the browser SSRF guard should explicitly exercise blocked IPv6 targets and a subresource request path, not only initial URLs or redirects.
 - If a deployment genuinely needs internal scraping, keep the default-deny behavior and require an explicit environment flag such as `ALLOW_PRIVATE_NETWORK=true` instead of silently weakening the default guard.
 - When private-network access is enabled, surface a clear runtime warning so operators understand the widened trust boundary.
 

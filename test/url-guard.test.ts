@@ -23,6 +23,12 @@ describe('assertUrlIsSafe', () => {
     await expect(assertUrlIsSafe('http://127.0.0.1')).rejects.toThrow(/blocked/i);
   });
 
+  it('rejects blocked IPv6 ranges', async () => {
+    await expect(assertUrlIsSafe('http://[::1]')).rejects.toThrow(/blocked/i);
+    await expect(assertUrlIsSafe('https://[fc00::1]')).rejects.toThrow(/blocked/i);
+    await expect(assertUrlIsSafe('https://[fe80::1]')).rejects.toThrow(/blocked/i);
+  });
+
   it('rejects hostnames that resolve to private addresses', async () => {
     const lookup = createLookup([{ address: '192.168.1.10', family: 4 }]);
 
@@ -80,6 +86,25 @@ describe('installUrlProtection', () => {
     const route = createRoute('http://169.254.169.254/latest/meta-data/');
     await handlers[0](route);
 
+    expect(route.abort).toHaveBeenCalledTimes(1);
+    expect(route.continue).not.toHaveBeenCalled();
+  });
+
+  it('aborts subresource requests that resolve to blocked addresses', async () => {
+    const handlers: Array<(route: Pick<Route, 'request' | 'abort' | 'continue'>) => Promise<void>> = [];
+    const page = {
+      route: vi.fn(async (_matcher: string, handler: (route: Pick<Route, 'request' | 'abort' | 'continue'>) => Promise<void>) => {
+        handlers.push(handler);
+      }),
+    } satisfies Pick<Page, 'route'>;
+    const lookup = createLookup([{ address: '169.254.169.254', family: 4 }]);
+
+    await installUrlProtection(page, lookup);
+
+    const route = createRoute('https://assets.example/script.js');
+    await handlers[0](route);
+
+    expect(lookup).toHaveBeenCalledWith('assets.example');
     expect(route.abort).toHaveBeenCalledTimes(1);
     expect(route.continue).not.toHaveBeenCalled();
   });

@@ -9,6 +9,7 @@
 - Added `ALLOW_PRIVATE_NETWORK` so browser-backed tools still block private, loopback, and link-local targets by default but can be explicitly re-enabled for trusted internal scraping deployments.
 - Documented the new runtime flag in `server.json` and the README, and emit a startup warning when the flag is enabled.
 - Added regression coverage for the opt-in private-network path in both direct URL validation and redirect-time request guarding.
+- Expanded SSRF regression coverage to lock in blocked IPv6 ranges and subresource request revalidation.
 
 ## 2026-06-25
 
