@@ -68,5 +68,8 @@ describe('package metadata', () => {
     expect(variablesByName.get('SEARCH_API_KEY')).toContain(
       'tavily, bing, google, zhipu, exa, bocha',
     );
+    expect(variablesByName.get('ALLOW_PRIVATE_NETWORK')).toContain(
+      'private, loopback, and link-local network targets',
+    );
   });
 });

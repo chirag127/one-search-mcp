@@ -6,6 +6,7 @@ import * as cheerio from 'cheerio';
 import { BrowserFinder } from '../browser/finder.js';
 import { defaultLogger } from '../logger/index.js';
 import { BROWSER_CONFIG } from './config.js';
+import { assertUrlIsSafe, installUrlProtection } from './url-guard.js';
 import type {
   AgentBrowserOptions,
   ScrapeResult,
@@ -89,6 +90,8 @@ export class AgentBrowser {
    */
   async navigate(url: string): Promise<void> {
     const page = await this.getPage();
+    await assertUrlIsSafe(url);
+    await installUrlProtection(page);
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: this.options.timeout });
   }
 

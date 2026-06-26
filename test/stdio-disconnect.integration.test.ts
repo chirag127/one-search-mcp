@@ -1,6 +1,4 @@
-import http from 'node:http';
 import { spawn, execFile } from 'node:child_process';
-import { once } from 'node:events';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { describe, expect, it } from 'vitest';
@@ -117,18 +115,6 @@ const integrationTest = process.platform === 'win32' || !hasLocalBrowser() ? it.
 
 describe('stdio disconnect integration', () => {
   integrationTest('cleans up browser children when stdin closes during an in-flight scrape request', async () => {
-    const server = http.createServer((_, response) => {
-      response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-      response.end('<html><body><main>integration test</main></body></html>');
-    });
-
-    await once(server.listen(0, '127.0.0.1'), 'listening');
-    const address = server.address();
-
-    if (address === null || typeof address === 'string') {
-      throw new Error('Expected TCP address');
-    }
-
     const tsxCommand = path.resolve(
       process.cwd(),
       'node_modules',
@@ -250,7 +236,7 @@ describe('stdio disconnect integration', () => {
         params: {
           name: 'one_scrape',
           arguments: {
-            url: `http://127.0.0.1:${address.port}`,
+            url: 'https://example.com/',
             formats: ['markdown'],
             waitFor: 20_000,
           },
@@ -291,9 +277,6 @@ describe('stdio disconnect integration', () => {
       await Promise.allSettled(descendants.map(async (processInfo) => {
         await forceKill(processInfo.pid);
       }));
-
-      server.close();
-      await once(server, 'close');
     }
   }, REQUEST_TIMEOUT_MS);
 });

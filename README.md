@@ -133,7 +133,7 @@ docker pull zacma/one-search-mcp:latest
 
 ## Environment Variables
 
-**Search Engine:**
+### Search Provider
 
 - **SEARCH_PROVIDER** (Optional): The search provider to use, supports `searxng`, `duckduckgo`, `bing`, `tavily`, `google`, `zhipu`, `exa`, `bocha`, `local`, default is `local`.
 - **SEARCH_API_URL** (Optional): The URL of the SearxNG API, or Google Custom Search Engine ID for `google`.
@@ -143,6 +143,12 @@ docker pull zacma/one-search-mcp:latest
 // supported search providers
 export type SearchProvider = 'searxng' | 'duckduckgo' | 'bing' | 'tavily' | 'google' | 'zhipu' | 'exa' | 'bocha' | 'local';
 ```
+
+### Browser Network Security
+
+- **ALLOW_PRIVATE_NETWORK** (Optional): Set to `true` to allow browser-backed tools (`one_scrape`, `one_map`, `one_extract`) to access private, loopback, and link-local network targets. Defaults to `false`.
+
+Use `ALLOW_PRIVATE_NETWORK=true` only in trusted deployments. When enabled, prompt injection or untrusted tool inputs can make the MCP process fetch internal services that are otherwise blocked by default.
 
 ### Search Provider Configuration
 

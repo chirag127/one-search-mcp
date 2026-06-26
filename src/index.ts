@@ -8,6 +8,7 @@ import type { SearchInput, MapInput, ScrapeInput, ExtractInput } from './schemas
 import { AgentBrowser } from './libs/agent-browser/index.js';
 import { activeBrowserRegistry } from './libs/agent-browser/registry.js';
 import { runBrowserTask } from './libs/agent-browser/task.js';
+import { isPrivateNetworkAllowed } from './libs/agent-browser/url-guard.js';
 import { processSearch } from './search/process-search.js';
 import { extractContentFromUrls } from './extract/process-extract.js';
 import { createToolHandler } from './server/tool-handler.js';
@@ -32,12 +33,13 @@ const FORMAT = process.env.FORMAT ?? 'json';
 const LANGUAGE = process.env.LANGUAGE ?? 'auto';
 const TIME_RANGE = process.env.TIME_RANGE ?? '';
 const DEFAULT_TIMEOUT = process.env.TIMEOUT ?? 10000;
+const ALLOW_PRIVATE_NETWORK = isPrivateNetworkAllowed();
 
 // Server implementation using MCP SDK v1.25+ pattern
 const server = new McpServer(
   {
     name: 'one-search-mcp',
-    version: '1.2.1',
+    version: '1.2.2',
   },
   {
     capabilities: {
@@ -292,6 +294,13 @@ async function runServer(): Promise<void> {
       level: 'info',
       data: 'OneSearch MCP server started',
     });
+
+    if (ALLOW_PRIVATE_NETWORK) {
+      await server.sendLoggingMessage({
+        level: 'warning',
+        data: 'ALLOW_PRIVATE_NETWORK is enabled. Browser-backed tools may access private, loopback, and link-local network targets.',
+      });
+    }
 
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);

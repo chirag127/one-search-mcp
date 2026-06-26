@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-06-26
+
+- Bumped the project version uniformly to `1.2.2` across npm/package metadata and MCP runtime metadata.
+- Added `ALLOW_PRIVATE_NETWORK` so browser-backed tools still block private, loopback, and link-local targets by default but can be explicitly re-enabled for trusted internal scraping deployments.
+- Documented the new runtime flag in `server.json` and the README, and emit a startup warning when the flag is enabled.
+- Added regression coverage for the opt-in private-network path in both direct URL validation and redirect-time request guarding.
+
+## 2026-06-25
+
+- Hardened browser-backed URL fetching against SSRF by validating outbound `http` / `https` targets before navigation and rejecting loopback, RFC1918 private, carrier-grade NAT, link-local, and IPv6 unique-local addresses.
+- Added shared browser network protection so `one_scrape`, `one_map`, and `one_extract` revalidate redirect and subresource requests instead of trusting only the initial URL.
+- Added regression coverage for blocked IP literals, private DNS resolutions, mixed public/private DNS answers, and blocked redirect targets.
+- Updated the stdio disconnect integration test to use a public HTTPS target so lifecycle coverage no longer depends on a loopback URL that is now intentionally rejected.
+
 ## 2026-04-16
 
 - Bumped the project version uniformly to `1.2.1` across npm/package metadata and MCP runtime metadata.

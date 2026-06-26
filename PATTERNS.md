@@ -8,6 +8,15 @@
 - `runBrowserTask(...)` also registers the browser in the global active-browser registry for process-level fallback cleanup.
 - Tool handlers should accept the MCP request context and pass `context.signal` down to any browser-backed operation instead of relying only on `finally` cleanup.
 
+## Browser SSRF Guard
+
+- Browser navigation must validate the initial URL before calling `page.goto(...)`.
+- Any browser page used for scraping or mapping must install a request-level guard so redirects and subresource requests are revalidated before they hit the network.
+- Allowed browser targets should be limited to `http` / `https` and must reject loopback, RFC1918 private, carrier-grade NAT, link-local, and IPv6 unique-local addresses after DNS resolution.
+- Treat mixed DNS answers as unsafe if any resolved address falls into a blocked range.
+- If a deployment genuinely needs internal scraping, keep the default-deny behavior and require an explicit environment flag such as `ALLOW_PRIVATE_NETWORK=true` instead of silently weakening the default guard.
+- When private-network access is enabled, surface a clear runtime warning so operators understand the widened trust boundary.
+
 ## Abort-Aware Search Providers
 
 - Search dispatch should live in a pure helper so provider routing can be regression-tested without starting the MCP server.
