@@ -55,6 +55,7 @@ export class AgentBrowser {
           action: 'launch',
           headless: this.options.headless ?? true,
           executablePath: this.browserPath,
+          ignoreHTTPSErrors: this.options.ignoreHttpsErrors ?? false,
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
@@ -114,11 +115,11 @@ export class AgentBrowser {
   /**
    * Take screenshot
    */
-  async screenshot(): Promise<string> {
+  async screenshot(options: { fullPage?: boolean } = {}): Promise<string> {
     const page = await this.getPage();
     const screenshot = await page.screenshot({
       type: 'png',
-      fullPage: false,
+      fullPage: options.fullPage ?? false,
     });
     return `data:image/png;base64,${screenshot.toString('base64')}`;
   }
@@ -155,6 +156,7 @@ export class AgentBrowser {
 
       const result: ScrapeResult = { success: true };
       const formats = options.formats || ['markdown'];
+      const useFullPageScreenshot = formats.includes('screenshot@fullPage');
 
       // Get HTML
       const html = await this.getHtml();
@@ -172,8 +174,10 @@ export class AgentBrowser {
         result.links = this.extractLinks(html, url);
       }
 
-      if (formats.includes('screenshot') || formats.includes('screenshot@fullPage')) {
-        result.screenshot = await this.screenshot();
+      if (formats.includes('screenshot') || useFullPageScreenshot) {
+        result.screenshot = await this.screenshot({
+          fullPage: useFullPageScreenshot,
+        });
       }
 
       return result;

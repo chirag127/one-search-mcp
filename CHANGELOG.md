@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-03
+
+- Tightened the `one_map` tool interface so it now exposes only the implemented browser-backed link-discovery options and rejects removed fields such as `ignoreSitemap` and `sitemapOnly` at the schema seam.
+- Tightened the `one_scrape` tool interface so it now exposes only the implemented scrape options and rejects removed fields such as `onlyMainContent`, `actions`, `extract`, `location`, and other unimplemented browser options at the schema seam.
+- Added request-scoped scrape timeout wiring so `one_scrape.timeout` now controls navigation and initial page-load timeout for that tool call.
+- Added request-scoped TLS override wiring so `one_scrape.skipTlsVerification` now launches the browser context with HTTPS certificate verification disabled for that scrape call only.
+- Implemented real `screenshot@fullPage` behavior so `one_scrape` now returns a full-page screenshot instead of silently falling back to the viewport-sized capture.
+- Updated browser-backed tool descriptions to match the narrowed interface and added regression coverage for strict schema rejection plus the newly supported scrape capabilities.
+
 ## 2026-06-26
 
 - Upgraded the direct MCP runtime dependency from `@modelcontextprotocol/sdk@^1.25.3` to `^1.29.0` to clear the known shared server/transport isolation advisory on the project's primary MCP SDK.

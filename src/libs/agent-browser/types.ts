@@ -12,9 +12,13 @@ export interface AgentBrowserOptions {
    */
   headless?: boolean;
   /**
-   * Timeout in milliseconds
+   * Navigation timeout in milliseconds
    */
   timeout?: number;
+  /**
+   * Ignore HTTPS/TLS certificate errors for this browser context
+   */
+  ignoreHttpsErrors?: boolean;
 }
 
 export interface ScrapeResult {
@@ -49,19 +53,13 @@ export interface SearchOptions {
 }
 
 /**
- * Options for scraping a URL
- * Simplified version of ScrapeInput from schemas.ts to avoid circular dependencies
+ * Supported scrape options exposed by the wrapper
  */
 export interface ScrapeOptions {
-  formats?: Array<'markdown' | 'html' | 'rawHtml' | 'links' | 'screenshot' | 'screenshot@fullPage' | 'extract'>;
-  onlyMainContent?: boolean;
-  includeTags?: string[];
-  excludeTags?: string[];
+  formats?: Array<'markdown' | 'html' | 'rawHtml' | 'links' | 'screenshot' | 'screenshot@fullPage'>;
   waitFor?: number;
   timeout?: number;
-  mobile?: boolean;
   skipTlsVerification?: boolean;
-  removeBase64Images?: boolean;
 }
 
 /**

@@ -1,5 +1,11 @@
 # Patterns
 
+## Honest Browser-Backed Tool Schemas
+
+- Browser-backed MCP tool schemas must only expose behavior that the current wrapper implementation actually honors.
+- If a browser-backed tool drops previously ignored fields, make the schema strict so removed fields fail at the seam instead of being silently discarded.
+- When a tool advertises a browser capability such as timeout control, TLS override, or full-page screenshots, wire it directly into the browser launch or navigation path for that specific request instead of documenting a pseudo-feature.
+
 ## Runtime Dependency Security Floors
 
 - Direct runtime dependencies with known security advisories should be bumped to a patched floor as soon as the project confirms the upgraded path still builds and passes targeted lifecycle tests.

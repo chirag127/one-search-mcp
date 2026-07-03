@@ -9,13 +9,13 @@ export const SEARCH_TOOL = {
 
 export const MAP_TOOL = {
   name: 'one_map',
-  description: 'Discover URLs from a starting point. Can use both sitemap.xml and HTML link discovery.',
+  description: 'Discover URLs from a starting point by loading a page in the browser and extracting links from its HTML.',
   schema: MapSchema,
 } as const;
 
 export const SCRAPE_TOOL = {
   name: 'one_scrape',
-  description: 'Scrape a single webpage with advanced options for content extraction. Supports various formats including markdown, HTML, and screenshots. Can execute custom actions like clicking or scrolling before scraping.',
+  description: 'Scrape a single webpage and return markdown, HTML, links, or a screenshot. Supports navigation timeout, TLS verification control, and full-page screenshots.',
   schema: ScrapeSchema,
 } as const;
 
