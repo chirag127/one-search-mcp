@@ -9,6 +9,7 @@ import { BROWSER_CONFIG } from './config.js';
 import { assertUrlIsSafe, installUrlProtection } from './url-guard.js';
 import type {
   AgentBrowserOptions,
+  ScrapeAction,
   ScrapeResult,
   ScrapeOptions,
   MapResult,
@@ -131,6 +132,34 @@ export class AgentBrowser {
     await new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  private async runScrapeActions(page: Page, actions: ScrapeAction[]): Promise<void> {
+    for (const action of actions) {
+      switch (action.type) {
+        case 'wait':
+          await this.wait(action.milliseconds);
+          break;
+        case 'click':
+          await page.click(action.selector);
+          break;
+        case 'write':
+          await page.fill(action.selector, action.text);
+          break;
+        case 'press':
+          await page.keyboard.press(action.key);
+          break;
+        case 'scroll':
+          await page.evaluate((direction) => {
+            const delta = direction === 'down' ? window.innerHeight : -window.innerHeight;
+            window.scrollBy(0, delta);
+          }, action.direction);
+          break;
+        case 'executeJavascript':
+          await page.evaluate(action.script);
+          break;
+      }
+    }
+  }
+
   /**
    * Close browser
    */
@@ -146,12 +175,17 @@ export class AgentBrowser {
   async scrapeUrl(url: string, options: ScrapeOptions = {}): Promise<ScrapeResult> {
     try {
       await this.navigate(url);
+      const page = await this.getPage();
 
       // Wait for page load
       if (options.waitFor) {
         await this.wait(options.waitFor);
       } else {
         await this.wait(BROWSER_CONFIG.DEFAULT_WAIT_MS);
+      }
+
+      if (options.actions?.length) {
+        await this.runScrapeActions(page, options.actions);
       }
 
       const result: ScrapeResult = { success: true };

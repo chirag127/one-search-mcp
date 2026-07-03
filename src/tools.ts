@@ -15,7 +15,7 @@ export const MAP_TOOL = {
 
 export const SCRAPE_TOOL = {
   name: 'one_scrape',
-  description: 'Scrape a single webpage and return markdown, HTML, links, or a screenshot. Supports navigation timeout, TLS verification control, and full-page screenshots.',
+  description: 'Scrape a single webpage and return markdown, HTML, links, or a screenshot. Supports navigation timeout, TLS verification control, full-page screenshots, and a small set of pre-scrape page actions.',
   schema: ScrapeSchema,
 } as const;
 

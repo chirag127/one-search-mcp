@@ -21,12 +21,28 @@ describe('tool schemas', () => {
       waitFor: 250,
       timeout: 2_000,
       skipTlsVerification: true,
+      actions: [
+        { type: 'wait', milliseconds: 100 },
+        { type: 'click', selector: '#submit' },
+        { type: 'write', selector: '#email', text: 'test@example.com' },
+        { type: 'press', key: 'Enter' },
+        { type: 'scroll', direction: 'down' },
+        { type: 'executeJavascript', script: 'window.__ready = true' },
+      ],
     })).toEqual({
       url: 'https://example.com',
       formats: ['markdown', 'screenshot@fullPage'],
       waitFor: 250,
       timeout: 2_000,
       skipTlsVerification: true,
+      actions: [
+        { type: 'wait', milliseconds: 100 },
+        { type: 'click', selector: '#submit' },
+        { type: 'write', selector: '#email', text: 'test@example.com' },
+        { type: 'press', key: 'Enter' },
+        { type: 'scroll', direction: 'down' },
+        { type: 'executeJavascript', script: 'window.__ready = true' },
+      ],
     });
 
     expect(ScrapeSchema.safeParse({
@@ -36,7 +52,12 @@ describe('tool schemas', () => {
 
     expect(ScrapeSchema.safeParse({
       url: 'https://example.com',
-      actions: [{ type: 'wait', milliseconds: 100 }],
+      actions: [{ type: 'screenshot' }],
+    }).success).toBe(false);
+
+    expect(ScrapeSchema.safeParse({
+      url: 'https://example.com',
+      actions: [{ type: 'scrape' }],
     }).success).toBe(false);
 
     expect(ScrapeSchema.safeParse({

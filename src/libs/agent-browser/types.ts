@@ -52,6 +52,33 @@ export interface SearchOptions {
   limit?: number;
 }
 
+export type ScrapeAction =
+  | {
+    type: 'wait';
+    milliseconds: number;
+  }
+  | {
+    type: 'click';
+    selector: string;
+  }
+  | {
+    type: 'write';
+    selector: string;
+    text: string;
+  }
+  | {
+    type: 'press';
+    key: string;
+  }
+  | {
+    type: 'scroll';
+    direction: 'up' | 'down';
+  }
+  | {
+    type: 'executeJavascript';
+    script: string;
+  };
+
 /**
  * Supported scrape options exposed by the wrapper
  */
@@ -60,6 +87,7 @@ export interface ScrapeOptions {
   waitFor?: number;
   timeout?: number;
   skipTlsVerification?: boolean;
+  actions?: ScrapeAction[];
 }
 
 /**

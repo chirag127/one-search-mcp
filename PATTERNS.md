@@ -5,6 +5,8 @@
 - Browser-backed MCP tool schemas must only expose behavior that the current wrapper implementation actually honors.
 - If a browser-backed tool drops previously ignored fields, make the schema strict so removed fields fail at the seam instead of being silently discarded.
 - When a tool advertises a browser capability such as timeout control, TLS override, or full-page screenshots, wire it directly into the browser launch or navigation path for that specific request instead of documenting a pseudo-feature.
+- If a browser-backed tool exposes page actions, keep them as a small pre-scrape interaction surface, execute them serially, and fail fast on the first action error before any content capture starts.
+- When executing caller-provided JavaScript in the page context, prefer Playwright's direct `page.evaluate(string)` support over wrapping the script in a manual `eval(...)` helper so promise-returning scripts are awaited correctly.
 
 ## Runtime Dependency Security Floors
 

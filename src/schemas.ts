@@ -38,6 +38,34 @@ export const MapSchema = z.object({
 
 export type MapInput = z.infer<typeof MapSchema>;
 
+const ActionSchema = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal('wait'),
+    milliseconds: z.number().describe('Time to wait in milliseconds'),
+  }),
+  z.object({
+    type: z.literal('click'),
+    selector: z.string().describe('CSS selector for the target element'),
+  }),
+  z.object({
+    type: z.literal('write'),
+    selector: z.string().describe('CSS selector for the target element'),
+    text: z.string().describe('Text to write'),
+  }),
+  z.object({
+    type: z.literal('press'),
+    key: z.string().describe('Key to press'),
+  }),
+  z.object({
+    type: z.literal('scroll'),
+    direction: z.enum(['up', 'down']).describe('Scroll direction'),
+  }),
+  z.object({
+    type: z.literal('executeJavascript'),
+    script: z.string().describe('JavaScript code to execute'),
+  }),
+]);
+
 // Scrape Schema
 export const ScrapeSchema = z.object({
   url: z.string().describe('The URL to scrape'),
@@ -52,6 +80,7 @@ export const ScrapeSchema = z.object({
   waitFor: z.number().optional().describe('Time in milliseconds to wait for dynamic content to load'),
   timeout: z.number().optional().describe('Maximum time in milliseconds to wait for the page to load'),
   skipTlsVerification: z.boolean().optional().describe('Skip TLS certificate verification'),
+  actions: z.array(ActionSchema).optional().describe('List of supported actions to run before scraping'),
 }).strict();
 
 export type ScrapeInput = z.infer<typeof ScrapeSchema>;
