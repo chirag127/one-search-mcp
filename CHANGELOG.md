@@ -2,8 +2,9 @@
 
 ## 2026-07-03
 
+- Bumped the project version uniformly to `1.2.3` across npm/package metadata and MCP runtime metadata.
 - Tightened the `one_map` tool interface so it now exposes only the implemented browser-backed link-discovery options and rejects removed fields such as `ignoreSitemap` and `sitemapOnly` at the schema seam.
-- Tightened the `one_scrape` tool interface so it now exposes only the implemented scrape options and rejects removed fields such as `onlyMainContent`, `actions`, `extract`, `location`, and other unimplemented browser options at the schema seam.
+- Tightened the `one_scrape` tool interface so it now exposes only the implemented scrape options, rejects removed fields such as `onlyMainContent`, `extract`, `location`, and other unimplemented browser options at the schema seam, and restores `actions` only as a bounded pre-scrape interaction surface.
 - Added request-scoped scrape timeout wiring so `one_scrape.timeout` now controls navigation and initial page-load timeout for that tool call.
 - Added request-scoped TLS override wiring so `one_scrape.skipTlsVerification` now launches the browser context with HTTPS certificate verification disabled for that scrape call only.
 - Implemented real `screenshot@fullPage` behavior so `one_scrape` now returns a full-page screenshot instead of silently falling back to the viewport-sized capture.

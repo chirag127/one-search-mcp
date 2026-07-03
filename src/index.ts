@@ -39,7 +39,7 @@ const ALLOW_PRIVATE_NETWORK = isPrivateNetworkAllowed();
 const server = new McpServer(
   {
     name: 'one-search-mcp',
-    version: '1.2.2',
+    version: '1.2.3',
   },
   {
     capabilities: {

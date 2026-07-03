@@ -1,15 +1,33 @@
-# 🚀 OneSearch MCP Server: Web Search & Crawl & Scraper & Content Prep
+# 🚀 OneSearch MCP Server: Web Search, URL Discovery, Scraper & Content Prep
 
-A Model Context Protocol (MCP) server implementation that integrates with multiple search providers for web search, local browser search, and scraping capabilities with agent-browser.
+A Model Context Protocol (MCP) server implementation that integrates with multiple search providers for web search, local browser search, URL discovery, and scraping capabilities with agent-browser.
 
 ## Features
 
-- Web search, scrape, crawl and preprocess content from websites.
+- Web search, scrape, discover URLs, and preprocess content from websites.
 - Support multiple search engines and web scrapers: **SearXNG**, **Tavily**, **DuckDuckGo**, **Bing**, **Google**, **Zhipu (智谱)**, **Exa**, **Bocha (博查)**, etc.
 - **Local web search** (browser search), support multiple search engines: **Bing**, **Google**, **Baidu**, **Sogou**, etc.
   - Use `agent-browser` for browser automation.
   - Free, no API keys required.
 - **Enabled tools:** `one_search`, `one_scrape`, `one_map`, `one_extract`
+
+## Current Tool Surface
+
+- `one_search`
+  - Returns search results from the configured provider.
+- `one_map`
+  - Discovers links from a starting URL by loading the page in the browser and extracting links from its HTML.
+  - Supported input fields: `url`, `search`, `includeSubdomains`, `limit`.
+  - This is not a sitemap crawler; removed fields such as `ignoreSitemap` and `sitemapOnly` are rejected at the schema boundary.
+- `one_scrape`
+  - Scrapes one page and returns content selected by `formats`.
+  - Supported input fields: `url`, `formats`, `waitFor`, `timeout`, `skipTlsVerification`, `actions`.
+  - Supported formats: `markdown`, `html`, `rawHtml`, `links`, `screenshot`, `screenshot@fullPage`.
+  - Supported pre-scrape actions: `wait`, `click`, `write`, `press`, `scroll`, `executeJavascript`.
+  - `actions` run serially before content capture and fail fast on the first action error.
+  - Removed fields such as `onlyMainContent`, `extract`, and `location` are rejected at the schema boundary.
+- `one_extract`
+  - Accepts only `urls` and returns preprocessed text blocks for downstream tools or models.
 
 ## Migration from v1.1.0 and Earlier
 
