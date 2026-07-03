@@ -21,6 +21,7 @@ describe('tool schemas', () => {
       waitFor: 250,
       timeout: 2_000,
       skipTlsVerification: true,
+      allowExecuteJavascript: true,
       actions: [
         { type: 'wait', milliseconds: 100 },
         { type: 'click', selector: '#submit' },
@@ -35,6 +36,7 @@ describe('tool schemas', () => {
       waitFor: 250,
       timeout: 2_000,
       skipTlsVerification: true,
+      allowExecuteJavascript: true,
       actions: [
         { type: 'wait', milliseconds: 100 },
         { type: 'click', selector: '#submit' },
@@ -54,6 +56,17 @@ describe('tool schemas', () => {
       url: 'https://example.com',
       actions: [{ type: 'screenshot' }],
     }).success).toBe(false);
+
+    expect(ScrapeSchema.safeParse({
+      url: 'https://example.com',
+      actions: [{ type: 'executeJavascript', script: 'window.__ready = true' }],
+    }).success).toBe(false);
+
+    expect(ScrapeSchema.safeParse({
+      url: 'https://example.com',
+      allowExecuteJavascript: true,
+      actions: [{ type: 'executeJavascript', script: 'window.__ready = true' }],
+    }).success).toBe(true);
 
     expect(ScrapeSchema.safeParse({
       url: 'https://example.com',

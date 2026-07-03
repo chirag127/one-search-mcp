@@ -8,9 +8,11 @@
 - Added request-scoped scrape timeout wiring so `one_scrape.timeout` now controls navigation and initial page-load timeout for that tool call.
 - Added request-scoped TLS override wiring so `one_scrape.skipTlsVerification` now launches the browser context with HTTPS certificate verification disabled for that scrape call only.
 - Implemented real `screenshot@fullPage` behavior so `one_scrape` now returns a full-page screenshot instead of silently falling back to the viewport-sized capture.
-- Restored `one_scrape.actions` as a strictly bounded pre-scrape interaction surface that supports only `wait`, `click`, `write`, `press`, `scroll`, and `executeJavascript`.
+- Restored `one_scrape.actions` as serial pre-scrape actions that support bounded interactions such as `wait`, `click`, `write`, `press`, and `scroll`, while keeping `executeJavascript` available as an advanced action.
 - Added serial action execution before content capture so scrape actions now run in order and fail fast instead of being silently ignored.
 - Fixed `executeJavascript` actions to run through Playwright's direct string evaluation path so promise-returning scripts are awaited instead of being wrapped in a lossy page-level `eval(...)`.
+- Added explicit `allowExecuteJavascript: true` gating so advanced page-script execution remains available without being silently bundled into the bounded scrape-action contract.
+- Clarified AI-facing tool and schema descriptions so `executeJavascript` explicitly calls out the `allowExecuteJavascript: true` requirement.
 - Updated browser-backed tool descriptions to match the narrowed interface and added regression coverage for strict schema rejection plus the newly supported scrape capabilities.
 
 ## 2026-06-26

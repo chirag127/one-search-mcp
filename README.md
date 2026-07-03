@@ -21,9 +21,10 @@ A Model Context Protocol (MCP) server implementation that integrates with multip
   - This is not a sitemap crawler; removed fields such as `ignoreSitemap` and `sitemapOnly` are rejected at the schema boundary.
 - `one_scrape`
   - Scrapes one page and returns content selected by `formats`.
-  - Supported input fields: `url`, `formats`, `waitFor`, `timeout`, `skipTlsVerification`, `actions`.
+  - Supported input fields: `url`, `formats`, `waitFor`, `timeout`, `skipTlsVerification`, `allowExecuteJavascript`, `actions`.
   - Supported formats: `markdown`, `html`, `rawHtml`, `links`, `screenshot`, `screenshot@fullPage`.
-  - Supported pre-scrape actions: `wait`, `click`, `write`, `press`, `scroll`, `executeJavascript`.
+  - Supported bounded pre-scrape actions: `wait`, `click`, `write`, `press`, `scroll`.
+  - Advanced pre-scrape action: `executeJavascript`. If `actions` contains `executeJavascript`, you must set `allowExecuteJavascript: true`.
   - `actions` run serially before content capture and fail fast on the first action error.
   - Removed fields such as `onlyMainContent`, `extract`, and `location` are rejected at the schema boundary.
 - `one_extract`

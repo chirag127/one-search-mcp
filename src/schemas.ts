@@ -80,8 +80,19 @@ export const ScrapeSchema = z.object({
   waitFor: z.number().optional().describe('Time in milliseconds to wait for dynamic content to load'),
   timeout: z.number().optional().describe('Maximum time in milliseconds to wait for the page to load'),
   skipTlsVerification: z.boolean().optional().describe('Skip TLS certificate verification'),
-  actions: z.array(ActionSchema).optional().describe('List of supported actions to run before scraping'),
-}).strict();
+  allowExecuteJavascript: z.boolean().optional().describe('Must be true when actions contain executeJavascript. Use only for advanced page-side scripting.'),
+  actions: z.array(ActionSchema).optional().describe('List of pre-scrape actions to run before content capture. Standard actions are bounded; executeJavascript requires allowExecuteJavascript: true.'),
+}).strict().superRefine((value, ctx) => {
+  const usesExecuteJavascript = value.actions?.some((action) => action.type === 'executeJavascript') ?? false;
+
+  if (usesExecuteJavascript && value.allowExecuteJavascript !== true) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['allowExecuteJavascript'],
+      message: 'allowExecuteJavascript must be true when using executeJavascript actions',
+    });
+  }
+});
 
 export type ScrapeInput = z.infer<typeof ScrapeSchema>;
 

@@ -168,9 +168,11 @@ async function processScrape(url: string, args: Omit<ScrapeInput, 'url'>, signal
   success: boolean;
 }> {
   const {
+    actions,
+    formats,
     skipTlsVerification = false,
     timeout = 30000,
-    ...scrapeArgs
+    waitFor,
   } = args;
   const browser = new AgentBrowser({
     headless: true,
@@ -182,7 +184,11 @@ async function processScrape(url: string, args: Omit<ScrapeInput, 'url'>, signal
     browser,
     signal,
     task: async () => {
-      const res = await browser.scrapeUrl(url, scrapeArgs);
+      const res = await browser.scrapeUrl(url, {
+        actions,
+        formats,
+        waitFor,
+      });
 
       if (!res.success) {
         throw new Error(`Failed to scrape: ${res.error}`);
