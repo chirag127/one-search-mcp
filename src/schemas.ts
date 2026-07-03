@@ -66,8 +66,8 @@ const ActionSchema = z.discriminatedUnion('type', [
   }),
 ]);
 
-// Scrape Schema
-export const ScrapeSchema = z.object({
+// Scrape schema exposed to MCP clients and inspector forms
+export const ScrapeToolInputSchema = z.object({
   url: z.string().describe('The URL to scrape'),
   formats: z.array(z.enum([
     'markdown',
@@ -82,7 +82,10 @@ export const ScrapeSchema = z.object({
   skipTlsVerification: z.boolean().optional().describe('Skip TLS certificate verification'),
   allowExecuteJavascript: z.boolean().optional().describe('Must be true when actions contain executeJavascript. Use only for advanced page-side scripting.'),
   actions: z.array(ActionSchema).optional().describe('List of pre-scrape actions to run before content capture. Standard actions are bounded; executeJavascript requires allowExecuteJavascript: true.'),
-}).strict().superRefine((value, ctx) => {
+}).strict();
+
+// Scrape schema with cross-field runtime validation
+export const ScrapeSchema = ScrapeToolInputSchema.superRefine((value, ctx) => {
   const usesExecuteJavascript = value.actions?.some((action) => action.type === 'executeJavascript') ?? false;
 
   if (usesExecuteJavascript && value.allowExecuteJavascript !== true) {
@@ -94,7 +97,7 @@ export const ScrapeSchema = z.object({
   }
 });
 
-export type ScrapeInput = z.infer<typeof ScrapeSchema>;
+export type ScrapeInput = z.infer<typeof ScrapeToolInputSchema>;
 
 // Extract Schema
 export const ExtractSchema = z.object({

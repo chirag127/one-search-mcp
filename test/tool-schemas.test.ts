@@ -1,5 +1,9 @@
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { describe, expect, it } from 'vitest';
 import { MapSchema, ScrapeSchema } from '../src/schemas.ts';
+import { SCRAPE_TOOL } from '../src/tools.ts';
 
 describe('tool schemas', () => {
   it('rejects removed one_map fields at the schema seam', () => {
@@ -77,5 +81,66 @@ describe('tool schemas', () => {
       url: 'https://example.com',
       location: { country: 'US' },
     }).success).toBe(false);
+  });
+
+  it('exposes one_scrape input fields through tools/list for inspector forms', async () => {
+    const server = new McpServer(
+      {
+        name: 'test-server',
+        version: '1.0.0',
+      },
+      {
+        capabilities: {
+          tools: {},
+        },
+      },
+    );
+
+    server.registerTool(
+      SCRAPE_TOOL.name,
+      {
+        description: SCRAPE_TOOL.description,
+        inputSchema: SCRAPE_TOOL.schema,
+      },
+      async () => ({
+        content: [
+          {
+            type: 'text' as const,
+            text: 'ok',
+          },
+        ],
+      }),
+    );
+
+    const client = new Client({
+      name: 'test-client',
+      version: '1.0.0',
+    });
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+
+    await Promise.all([
+      server.connect(serverTransport),
+      client.connect(clientTransport),
+    ]);
+
+    try {
+      const result = await client.listTools();
+      const scrapeTool = result.tools.find((tool) => tool.name === SCRAPE_TOOL.name);
+
+      expect(scrapeTool?.inputSchema.properties).toMatchObject({
+        url: expect.any(Object),
+        formats: expect.any(Object),
+        waitFor: expect.any(Object),
+        timeout: expect.any(Object),
+        skipTlsVerification: expect.any(Object),
+        allowExecuteJavascript: expect.any(Object),
+        actions: expect.any(Object),
+      });
+    } finally {
+      await Promise.all([
+        client.close(),
+        server.close(),
+      ]);
+    }
   });
 });

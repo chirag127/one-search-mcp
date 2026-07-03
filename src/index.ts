@@ -4,6 +4,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { SearchProvider } from './interface.js';
 import { SEARCH_TOOL, EXTRACT_TOOL, SCRAPE_TOOL, MAP_TOOL } from './tools.js';
+import { ScrapeSchema } from './schemas.js';
 import type { SearchInput, MapInput, ScrapeInput, ExtractInput } from './schemas.js';
 import { AgentBrowser } from './libs/agent-browser/index.js';
 import { activeBrowserRegistry } from './libs/agent-browser/registry.js';
@@ -123,7 +124,7 @@ server.registerTool(
     inputSchema: SCRAPE_TOOL.schema,
   },
   createToolHandler(SCRAPE_TOOL.name, async (args: ScrapeInput, context) => {
-    const { url, ...scrapeArgs } = args;
+    const { url, ...scrapeArgs } = ScrapeSchema.parse(args);
     const { content } = await processScrape(url, scrapeArgs, context.signal);
 
     return {

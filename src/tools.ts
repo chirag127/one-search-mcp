@@ -1,4 +1,4 @@
-import { SearchSchema, MapSchema, ScrapeSchema, ExtractSchema } from './schemas.js';
+import { SearchSchema, MapSchema, ScrapeToolInputSchema, ExtractSchema } from './schemas.js';
 
 // Tool definitions following MCP SDK v1.25+ pattern
 export const SEARCH_TOOL = {
@@ -16,7 +16,7 @@ export const MAP_TOOL = {
 export const SCRAPE_TOOL = {
   name: 'one_scrape',
   description: 'Scrape a single webpage and return markdown, HTML, links, or a screenshot. Supports navigation timeout, TLS verification control, full-page screenshots, bounded pre-scrape actions, and advanced executeJavascript only when allowExecuteJavascript is true.',
-  schema: ScrapeSchema,
+  schema: ScrapeToolInputSchema,
 } as const;
 
 export const EXTRACT_TOOL = {

@@ -4,6 +4,7 @@
 
 - Browser-backed MCP tool schemas must only expose behavior that the current wrapper implementation actually honors.
 - If a browser-backed tool drops previously ignored fields, make the schema strict so removed fields fail at the seam instead of being silently discarded.
+- If a tool needs cross-field validation, keep the MCP-exposed `inputSchema` as a plain object schema so `tools/list` and inspector-style form generation still receive concrete properties; run the cross-field validation as a separate runtime parse.
 - When a tool advertises a browser capability such as timeout control, TLS override, or full-page screenshots, wire it directly into the browser launch or navigation path for that specific request instead of documenting a pseudo-feature.
 - If a browser-backed tool exposes page actions, keep the standard actions as a small bounded pre-scrape interaction surface, execute them serially, and fail fast on the first action error before any content capture starts.
 - If a tool also exposes caller-provided JavaScript, require an explicit opt-in field at the schema seam and document it as advanced or unsafe instead of bounded; AI-facing descriptions should say when that opt-in must be `true`.
